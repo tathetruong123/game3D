@@ -10,14 +10,24 @@ public class Character : MonoBehaviour
     public PlayerInput playerInput;
     public Animator animator;
 
+    public Damezone damageZone;
+    public HP HP;
+
+    public GameObject sword; // kiem
+
     // state machine
     public enum CharacterState
-    { Normal, Attack }
+    { Normal, Attack, Die }
 
     public CharacterState curState; // trạng thái hiện tại
 
     void FixedUpdate()
     {
+        if(HP.currentHP <= 0 )
+        {
+            ChangeState(CharacterState.Die);
+            return;
+        }
         switch (curState)
         {
             case CharacterState.Normal:
@@ -72,6 +82,15 @@ public class Character : MonoBehaviour
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
                 break;
+            case CharacterState.Die:
+                //roi kiem
+                sword.transform.SetParent(null);
+                //roi xg dat
+                
+                sword.GetComponent<Rigidbody>().isKinematic =false;
+                
+                animator.SetTrigger("Die");
+                break;
         }
 
         // B3: Update state
@@ -82,4 +101,11 @@ public class Character : MonoBehaviour
     {
         ChangeState(CharacterState.Normal);
     }
+   
+    public void EndAttack()
+    {
+        //damageZone.Attack();
+    }
+
+    
 }
