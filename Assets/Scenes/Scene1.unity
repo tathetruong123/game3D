@@ -1178,6 +1178,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1700938022 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1539380604617874, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
+  m_PrefabInstance: {fileID: 1871684794}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1776886033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1334,6 +1339,9 @@ MonoBehaviour:
   movementVelocty: {x: 0, y: 0, z: 0}
   playerInput: {fileID: 1871684797}
   animator: {fileID: 60533127}
+  damageZone: {fileID: 0}
+  HP: {fileID: 1871684798}
+  sword: {fileID: 1700938022}
   curState: 0
 --- !u!114 &1871684797
 MonoBehaviour:
@@ -1376,6 +1384,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f393f85f165d3f34c839614392437d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxMP: 0
+  CurrentMP: 0
 --- !u!4 &1871684801 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4697453817444104, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
