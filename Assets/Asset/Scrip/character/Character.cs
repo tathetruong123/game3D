@@ -163,6 +163,7 @@ public class Character : MonoBehaviour
                 animator.SetTrigger("Die");
                 break;
         }
+      
 
         // Cập nhật trạng thái hiện tại
         curState = newState;
