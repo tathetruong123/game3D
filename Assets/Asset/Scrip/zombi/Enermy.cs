@@ -17,7 +17,7 @@ public class Enermy : MonoBehaviour
     public Animator animator; // khai báo component
 
 
-   // public DamageZone damageZone;
+    public DamageZone damageZone;
 
     public Health health;
 
@@ -103,11 +103,11 @@ public class Enermy : MonoBehaviour
         switch (newState)
         {
             case CharacterState.Normal:
-               // damageZone.EndAttack();
+               damageZone.EndAttack();
                 break;
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
-               // damageZone.BeginAttack();
+                damageZone.BeginAttack();
                 break;
             case CharacterState.Die:
                 animator.SetTrigger("Die");

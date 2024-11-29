@@ -16,7 +16,7 @@ public class Damezone : MonoBehaviour
         damageCollider.enabled = false;
         
     }
-    private void OntriggerStay(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if(other.gameObject.CompareTag(targetTag) && !collidersTargets.Contains(other))
         {
@@ -32,7 +32,7 @@ public class Damezone : MonoBehaviour
     
 
         // Update is called once per frame
-        private void OntriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag(targetTag)&& !collidersTargets.Contains(other))
             {
