@@ -23,7 +23,7 @@ public class Character : MonoBehaviour
     {
         Normal,
         Attack,
-        Jump,
+        //Jump,
         Laugh,
         Hurt,
         Crouch, // Thêm trạng thái ngồi
@@ -45,9 +45,10 @@ public class Character : MonoBehaviour
         switch (curState)
         {
             case CharacterState.Normal:
-                if (!stateInfo.IsName("Jump") &&
+                if (//!stateInfo.IsName("Jump") &&
                     !stateInfo.IsName("Laugh") &&
                     !stateInfo.IsName("Hurt") &&
+                    !stateInfo.IsName("Attack") &&
                     !stateInfo.IsName("Crouch"))
                 {
                     CalculateMovement();
@@ -72,10 +73,16 @@ public class Character : MonoBehaviour
 
     void CalculateMovement()
     {
-        if (playerInput.jumpInput)
+        //if (playerInput.jumpInput)
+        //{
+        //    ChangeState(CharacterState.Jump);
+        //    playerInput.jumpInput = false; // Reset input
+        //    return;
+        //}
+        if (playerInput.attackInput)
         {
-            ChangeState(CharacterState.Jump);
-            playerInput.jumpInput = false; // Reset input
+            ChangeState(CharacterState.Attack);
+            playerInput.attackInput = false; // Reset input
             return;
         }
 
@@ -129,9 +136,16 @@ public class Character : MonoBehaviour
             case CharacterState.Normal:
                 break;
 
-            case CharacterState.Jump:
-                animator.SetTrigger("Jump");
-                StartCoroutine(WaitForAnimation("Jump", () =>
+            //case CharacterState.Jump:
+            //    animator.SetTrigger("Jump");
+            //    StartCoroutine(WaitForAnimation("Jump", () =>
+            //    {
+            //        ChangeState(CharacterState.Normal);
+            //    }));
+            //    break;
+            case CharacterState.Attack:
+                animator.SetTrigger("Attack");
+                StartCoroutine(WaitForAnimation("Attack", () =>
                 {
                     ChangeState(CharacterState.Normal);
                 }));

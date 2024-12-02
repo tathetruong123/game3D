@@ -22,7 +22,7 @@ public class PlayerInput : MonoBehaviour
         // Kiểm tra phím tấn công (chuột trái)
         if (!attackInput && Time.timeScale != 0)
         {
-            attackInput = Input.GetMouseButtonDown(0);
+            attackInput = Input.GetKeyDown(KeyCode.K);
         }
 
         // Kiểm tra phím nhảy
