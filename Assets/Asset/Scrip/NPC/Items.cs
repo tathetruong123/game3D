@@ -4,39 +4,35 @@ using UnityEngine;
 
 public class Items : MonoBehaviour
 {
-    public enum ItemType { HP, MP } // Loại vật phẩm
+    public enum ItemType { HP, MP }
     public ItemType itemType; // Loại vật phẩm (HP hoặc MP)
-    public int amount = 1; // Số lượng HP hoặc MP
+    public int amount; // Số lượng HP/MP cần thêm vào rương
+    public Iventory inventory; // Rương (đối tượng chứa HP và MP)
 
-    private Iventory inventory;
-
-    void Start()
+    private void OnTriggerEnter(Collider other)
     {
-        // Lấy Inventory của người chơi (có thể thêm qua Inspector nếu cần)
-        inventory = GameObject.FindObjectOfType<Iventory>();
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player")) // Kiểm tra va chạm với đối tượng có tag "Player"
         {
             Debug.Log("Player collided with item.");
 
+            // Kiểm tra xem nhân vật có Inventory hay không
             if (inventory != null)
             {
+                // Nếu là vật phẩm HP, cộng vào lượng HP
                 if (itemType == ItemType.HP)
                 {
-                    Debug.Log("Adding HP to inventory");
-                    inventory.AddHP(amount); // Cộng HP vào rương
+                    inventory.AddHP(amount);
+                    Debug.Log("Added HP: " + amount);
                 }
+                // Nếu là vật phẩm MP, cộng vào lượng MP
                 else if (itemType == ItemType.MP)
                 {
-                    Debug.Log("Adding MP to inventory");
-                    inventory.AddMP(amount); // Cộng MP vào rương
+                    inventory.AddMP(amount);
+                    Debug.Log("Added MP: " + amount);
                 }
 
-                Destroy(gameObject); // Xóa vật phẩm sau khi nhặt
-                Debug.Log("Item destroyed.");
+                // Sau khi nhặt, vật phẩm sẽ bị xóa
+                Destroy(gameObject);
             }
             else
             {
