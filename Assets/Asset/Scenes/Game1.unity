@@ -11335,6 +11335,18 @@ MonoBehaviour:
   mpBar: {fileID: 1847708445}
   sprintMPConsumptionRate: 10
   mpRegenRate: 20
+--- !u!114 &1871684799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871684795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f393f85f165d3f34c839614392437d30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1871684801 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4697453817444104, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}

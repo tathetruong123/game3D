@@ -36,9 +36,20 @@ public class PlayerQuestPanel : MonoBehaviour
         {
             var questItem = Instantiate(questItemPrefab, questItemPrefab.transform.parent);
             questItem.text = $"{item.QuestItemName}: {item.CurrentAmount}/{item.QuestTargetAmount}";
+            if (item.CurrentAmount >= item.QuestTargetAmount)
+            {
+                questItem.color = Color.green; // Nhiệm vụ hoàn thành
+            }
+            else
+            {
+                questItem.color = Color.white; // Nhiệm vụ đang làm
+            }
+
+
             questItem.gameObject.SetActive(true);
-            questItem.transform.parent = questItemPrefab.transform.parent;
+            
         }
+
     }
 
     public void ShowHideQuestPanel()
