@@ -23,10 +23,10 @@ public class Character : MonoBehaviour
     {
         Normal,
         Attack,
-        //Jump,
-        Laugh,
-        Hurt,
-        Crouch, // Thêm trạng thái ngồi
+        Jump,
+        Laugh,// happy
+        Hurt,// bi thuong
+        Crouch, // ngồi
         Die
     }
 
@@ -45,7 +45,7 @@ public class Character : MonoBehaviour
         switch (curState)
         {
             case CharacterState.Normal:
-                if (//!stateInfo.IsName("Jump") &&
+                if (!stateInfo.IsName("Jump") &&
                     !stateInfo.IsName("Laugh") &&
                     !stateInfo.IsName("Hurt") &&
                     !stateInfo.IsName("Attack") &&
@@ -73,37 +73,47 @@ public class Character : MonoBehaviour
 
     void CalculateMovement()
     {
-        //if (playerInput.jumpInput)
-        //{
-        //    ChangeState(CharacterState.Jump);
-        //    playerInput.jumpInput = false; // Reset input
-        //    return;
-        //}
+        if (playerInput.jumpInput)
+        {
+            ChangeState(CharacterState.Jump);
+            playerInput.jumpInput = false;
+            return;
+        }
         if (playerInput.attackInput)
         {
             ChangeState(CharacterState.Attack);
-            playerInput.attackInput = false; // Reset input
+            playerInput.attackInput = false;
+            return;
+        }
+
+        if (playerInput.crouchToggle) // Kiểm tra trạng thái cúi
+        {
+            if (curState != CharacterState.Crouch)
+            {
+                ChangeState(CharacterState.Crouch); // Đổi sang trạng thái cúi
+            }
+            else
+            {
+                ChangeState(CharacterState.Normal); // Trở về trạng thái đứng
+            }
+
+            playerInput.crouchToggle = false; // Reset trạng thái toggle
             return;
         }
 
         if (playerInput.laughInput)
         {
             ChangeState(CharacterState.Laugh);
-            playerInput.laughInput = false; // Reset input
+            playerInput.laughInput = false;
             return;
         }
 
-        if (playerInput.crouchInput) // Kiểm tra nhấn phím X để ngồi
-        {
-            ChangeState(CharacterState.Crouch);
-            playerInput.crouchInput = false; // Reset input
-            return;
-        }
+        float currentSpeed = playerInput.sprintInput ? speed * 2 : speed;
 
         movementVelocity.Set(playerInput.horizontalInput, 0, playerInput.verticalInput);
         movementVelocity.Normalize();
         movementVelocity = Quaternion.Euler(0, -45, 0) * movementVelocity;
-        movementVelocity *= speed * Time.deltaTime;
+        movementVelocity *= currentSpeed * Time.deltaTime;
 
         animator.SetFloat("Speed", movementVelocity.magnitude);
 
@@ -112,6 +122,9 @@ public class Character : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(movementVelocity);
         }
     }
+
+
+
 
     // Chuyển đổi trạng thái
     private void ChangeState(CharacterState newState)
@@ -136,13 +149,13 @@ public class Character : MonoBehaviour
             case CharacterState.Normal:
                 break;
 
-            //case CharacterState.Jump:
-            //    animator.SetTrigger("Jump");
-            //    StartCoroutine(WaitForAnimation("Jump", () =>
-            //    {
-            //        ChangeState(CharacterState.Normal);
-            //    }));
-            //    break;
+            case CharacterState.Jump:
+                animator.SetTrigger("Jump");
+                StartCoroutine(WaitForAnimation("Jump", () =>
+                {
+                    ChangeState(CharacterState.Normal);
+                }));
+                break;
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
                 StartCoroutine(WaitForAnimation("Attack", () =>
@@ -168,8 +181,9 @@ public class Character : MonoBehaviour
                 break;
 
             case CharacterState.Crouch:
-                animator.SetTrigger("Crouch"); // Thiết lập trigger "Crouch"
+                animator.SetTrigger("Crouch"); 
                 break;
+
 
             case CharacterState.Die:
                 sword.transform.SetParent(null);
