@@ -15,7 +15,7 @@ public class enemyAI : MonoBehaviour
 
     public Animator animator; // khai báo component
 
-    public Damezone damageZone;// khai bao
+    public DamageZone damageZone;// khai bao
 
     public HP HP;
 

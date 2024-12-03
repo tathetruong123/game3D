@@ -62,7 +62,7 @@ public class PlayerQuestPanel : MonoBehaviour
         while (true)
         {
             var currenX = transform.localPosition.x;
-            var targetX = show ? initialPosition.x + 540 : initialPosition.x;
+            var targetX = show ? initialPosition.x + 530 : initialPosition.x;
             var newX = Mathf.Lerp(currenX, targetX, Time.deltaTime * 2);
             transform.localPosition = new Vector3(newX, 0, 0);
             if (Mathf.Abs(newX - targetX) < 1)

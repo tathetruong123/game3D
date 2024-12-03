@@ -103,7 +103,7 @@ public class Enermy : MonoBehaviour
         switch (newState)
         {
             case CharacterState.Normal:
-               damageZone.EndAttack();
+                damageZone.EndAttack();
                 break;
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
