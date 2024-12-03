@@ -7,17 +7,22 @@ public class PlayerInput : MonoBehaviour
     [HideInInspector] public float horizontalInput;
     [HideInInspector] public float verticalInput;
 
-    public bool attackInput;
-    public bool jumpInput;    // Nhảy
-    public bool crouchInput;  // Cúi
-    public bool laughInput;   // Cười
-    public bool sprintInput;  // Chạy nhanh
+    public bool attackInput;   // Tấn công
+    public bool jumpInput;     // Nhảy
+    public bool crouchToggle;  // Cúi (bật/tắt)
+    public bool laughInput;    // Cười
+    public bool sprintInput;   // Chạy nhanh
+
+    private bool isCrouching = false; // Trạng thái hiện tại của cúi
 
     private void Update()
     {
         // Lấy giá trị đầu vào di chuyển
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+
+        // Kiểm tra phím chạy nhanh
+        sprintInput = Input.GetKey(KeyCode.LeftShift);
 
         // Kiểm tra phím tấn công (chuột trái)
         if (!attackInput && Time.timeScale != 0)
@@ -31,27 +36,31 @@ public class PlayerInput : MonoBehaviour
             jumpInput = Input.GetKeyDown(KeyCode.J); // Nhấn phím J
         }
 
-        // Kiểm tra phím cúi
-        crouchInput = Input.GetKey(KeyCode.C); // Giữ phím C để cúi
-
         // Kiểm tra phím cười
         if (!laughInput && Time.timeScale != 0)
         {
             laughInput = Input.GetKeyDown(KeyCode.X); // Nhấn phím X
         }
 
-        // Kiểm tra phím chạy nhanh
-        sprintInput = Input.GetKey(KeyCode.LeftShift); // Giữ phím Shift để chạy nhanh
+        // Kiểm tra cúi (toggle)
+        if (Input.GetKeyDown(KeyCode.C) && Time.timeScale != 0)
+        {
+            isCrouching = !isCrouching; // Đảo trạng thái cúi
+            crouchToggle = isCrouching; // Gửi trạng thái mới
+        }
     }
 
     private void OnDisable()
     {
+        // Đặt lại tất cả các trạng thái đầu vào
         horizontalInput = 0;
         verticalInput = 0;
         attackInput = false;
         jumpInput = false;
+        crouchToggle = false;
         laughInput = false;
-        crouchInput = false;
         sprintInput = false;
+
+        isCrouching = false;
     }
 }
