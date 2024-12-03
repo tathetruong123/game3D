@@ -18,6 +18,7 @@ public class Enermy : MonoBehaviour
 
 
     public DamageZone damageZone;
+    public BoxCollider damBox;
 
     public Health health;
 
@@ -35,6 +36,7 @@ public class Enermy : MonoBehaviour
 
     void Start()
     {
+        damBox.enabled = false;
         originalePosition = transform.position;
 
     }
@@ -117,5 +119,22 @@ public class Enermy : MonoBehaviour
 
         // update current state
         currentState = newState;
+    }
+
+    public void ZomAttack()
+    {
+        damBox.enabled = true;
+    }
+    public void EndAttack()
+    {
+        damBox.enabled = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("katana"))
+        {
+            health.TakeDamage(20);
+        }
     }
 }
