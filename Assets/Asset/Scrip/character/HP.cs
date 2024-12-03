@@ -96,4 +96,12 @@ public class HP : MonoBehaviour
             mpBar.value = currentMP;
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Zombie"))
+        {
+            currentHP -= 2;// HP player
+            healthBar.value = currentHP;
+        }
+    }
 }

@@ -16,7 +16,6 @@ public class enemyAI : MonoBehaviour
     public Animator animator; // khai báo component
 
     public DamageZone damageZone;// khai bao
-
     public HP HP;
 
     // state machine
@@ -114,6 +113,5 @@ public class enemyAI : MonoBehaviour
         // update current state
         currentState = newState;
     }
-    
     
 }
