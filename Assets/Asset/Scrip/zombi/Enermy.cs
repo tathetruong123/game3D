@@ -18,6 +18,7 @@ public class Enermy : MonoBehaviour
 
 
     public DamageZone damageZone;
+    public BoxCollider damBox;
 
     public Health health;
 
@@ -36,6 +37,7 @@ public class Enermy : MonoBehaviour
     void Start()
     {
         originalePosition = transform.position;
+        damBox.enabled = false;
 
     }
 
@@ -111,11 +113,28 @@ public class Enermy : MonoBehaviour
                 break;
             case CharacterState.Die:
                 animator.SetTrigger("Die");
-                Destroy(gameObject, 5f);
+                
                 break;
         }
 
         // update current state
         currentState = newState;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("katana"))
+        {
+            health.TakeDamage(20);
+        }
+    }
+
+    public void ZomAttack()
+    {
+        damBox.enabled = true;
+    }
+    public void EndAttack()
+    {
+        damBox.enabled = false;
     }
 }

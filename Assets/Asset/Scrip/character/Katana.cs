@@ -2,8 +2,10 @@
 
 public class Katana : MonoBehaviour
 {
+
     public float damage = 20f; // Lượng sát thương gây ra
     public bool isAttacking = false; // Trạng thái tấn công
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -16,4 +18,6 @@ public class Katana : MonoBehaviour
             }
         }
     }
+
+
 }
