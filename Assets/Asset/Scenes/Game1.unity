@@ -11266,7 +11266,7 @@ MonoBehaviour:
   verticalInput: 0
   attackInput: 0
   jumpInput: 0
-  crouchInput: 0
+  crouchToggle: 0
   laughInput: 0
   sprintInput: 0
 --- !u!114 &1871684798
@@ -11283,6 +11283,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 100
   currentHP: 0
+  healthBar: {fileID: 0}
+  maxMP: 0
+  currentMP: 0
+  mpBar: {fileID: 0}
+  sprintMPConsumptionRate: 10
+  mpRegenRate: 20
 --- !u!114 &1871684799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13716,6 +13722,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6313433805577235003, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+      propertyPath: sliderHP
+      value: 
+      objectReference: {fileID: 889027842531155244}
     - target: {fileID: 8122201389927500994, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
       propertyPath: target
       value: 
@@ -13725,6 +13735,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+--- !u!114 &889027842531155244 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1278898025519346394, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+  m_PrefabInstance: {fileID: 889027842531155243}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2936675249262581489
 PrefabInstance:
   m_ObjectHideFlags: 0
