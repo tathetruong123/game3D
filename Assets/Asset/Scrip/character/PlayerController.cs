@@ -4,16 +4,19 @@ public class PlayerController : MonoBehaviour
 {
     public BoxCollider katana; // Gắn Katana từ Inspector
 
-    private void Awake()
+    void Update()
     {
         katana.enabled = false;
+
     }
-    public void OnAttack()
+
+    void Attack()
     {
+
         katana.enabled = true;
     }
 
-    public void EndAttack()
+    void ResetAttack()
     {
         katana.enabled = false;
     }
@@ -38,4 +41,5 @@ public class PlayerController : MonoBehaviour
     //{
     //    katana.isAttacking = false;
     //}
+
 }

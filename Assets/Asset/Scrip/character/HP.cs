@@ -104,4 +104,5 @@ public class HP : MonoBehaviour
             healthBar.value = currentHP;
         }
     }
+
 }
