@@ -10,7 +10,7 @@ public class Character : MonoBehaviour
     public PlayerInput playerInput;
     public Animator animator;
 
-    public Damezone damageZone;
+    public DamageZone damageZone;
     public HP HP;
 
     public float gravity = 10f; // Trọng lực

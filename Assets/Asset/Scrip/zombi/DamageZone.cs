@@ -25,7 +25,7 @@ public class DamageZone : MonoBehaviour
     {
         if (other.gameObject.CompareTag(targetTag) && !colliderTarget.Contains(other))
         {
-            Debug.Log("cc");
+            
             colliderTarget.Add(other);
             var go = other.GetComponent<Health>();
             if (go != null)
