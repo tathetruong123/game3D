@@ -40,6 +40,7 @@ public class Health : MonoBehaviour
 
     private void Die()
     {
+        Destroy(gameObject, 20f);
         Debug.Log("Zombie đã chết!");
         Destroy(gameObject); // Hoặc thay đổi trạng thái Zombie
     }
