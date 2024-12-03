@@ -5,8 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - NPC
-  - Zombie
-  - katana
   layers:
   - Default
   - TransparentFX
