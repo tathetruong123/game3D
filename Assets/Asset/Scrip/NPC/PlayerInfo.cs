@@ -33,7 +33,8 @@ public class PlayerInfo : MonoBehaviour
     // Hàm thoát game
     public void QuitGame()
     {
-        Debug.Log("Quitting to scene: " + sceneToLoad);
-        SceneManager.LoadScene(sceneToLoad); // Chuyển sang Scene có tên được chỉ định trong `sceneToLoad`
+        Debug.Log("Game Over!");
+        // Code chuyển scene hoặc thoát game
+        SceneManager.LoadScene("MainMenu");
     }
 }

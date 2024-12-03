@@ -5,36 +5,36 @@ using UnityEngine;
 
 public class Iventory : MonoBehaviour
 {
-    public int currentHPAmount = 0; // Số lượng HP trong rương
-    public int currentMPAmount = 0; // Số lượng MP trong rương
+    public int currentHP = 0;  // HP hiện tại trong rương
+    public int currentMP = 0;  // MP hiện tại trong rương
 
-    public TextMeshProUGUI hpText; // Tham chiếu đến TextMeshProUGUI để hiển thị số lượng HP
-    public TextMeshProUGUI mpText; // Tham chiếu đến TextMeshProUGUI để hiển thị số lượng MP
+    public TextMeshProUGUI hpText; // Hiển thị HP trong UI
+    public TextMeshProUGUI mpText; // Hiển thị MP trong UI
 
-    // Hàm này sẽ được gọi khi người chơi nhặt HP hoặc MP
+    // Hàm cộng HP vào rương
     public void AddHP(int amount)
     {
-        currentHPAmount += amount; // Cộng HP vào số lượng hiện tại
-        UpdateUI(); // Cập nhật UI sau khi thay đổi HP
+        currentHP += amount;
+        UpdateUI();
     }
 
+    // Hàm cộng MP vào rương
     public void AddMP(int amount)
     {
-        currentMPAmount += amount; // Cộng MP vào số lượng hiện tại
-        UpdateUI(); // Cập nhật UI sau khi thay đổi MP
+        currentMP += amount;
+        UpdateUI();
     }
 
-    // Hàm cập nhật UI để hiển thị số lượng HP và MP
-    private void UpdateUI()
+    // Hàm cập nhật UI
+    void UpdateUI()
     {
         if (hpText != null)
         {
-            hpText.text = "HP: " + currentHPAmount;
+            hpText.text = "HP: " + currentHP;
         }
-
         if (mpText != null)
         {
-            mpText.text = "MP: " + currentMPAmount;
+            mpText.text = "MP: " + currentMP;
         }
     }
 }
