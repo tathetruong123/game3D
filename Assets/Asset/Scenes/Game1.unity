@@ -5391,6 +5391,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 907025484}
   m_CullTransparentMesh: 1
+--- !u!1 &922278495 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1216839097633546, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
+  m_PrefabInstance: {fileID: 1871684794}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &922278498
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922278495}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5272941, y: 0.31659377, z: 1.106086}
+  m_Center: {x: 0.04975885, y: 0.83375, z: 0.11968765}
+--- !u!114 &922278499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922278495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d839ccb5b4cb804b95acb8b23aba5ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 20
+  isAttacking: 0
 --- !u!1 &932527584
 GameObject:
   m_ObjectHideFlags: 0
@@ -11208,19 +11248,25 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1347116199977322, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
       insertIndex: 2
-      addedObject: {fileID: 1871684799}
-    - targetCorrespondingSourceObject: {fileID: 1347116199977322, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
-      insertIndex: 3
       addedObject: {fileID: 1871684798}
     - targetCorrespondingSourceObject: {fileID: 1347116199977322, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
-      insertIndex: 4
+      insertIndex: 3
       addedObject: {fileID: 1871684797}
     - targetCorrespondingSourceObject: {fileID: 1347116199977322, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
-      insertIndex: 5
+      insertIndex: 4
       addedObject: {fileID: 1871684796}
     - targetCorrespondingSourceObject: {fileID: 1347116199977322, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1871684803}
+    - targetCorrespondingSourceObject: {fileID: 1347116199977322, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1871684804}
+    - targetCorrespondingSourceObject: {fileID: 1216839097633546, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 922278499}
+    - targetCorrespondingSourceObject: {fileID: 1216839097633546, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 922278498}
   m_SourcePrefab: {fileID: 100100000, guid: e209b9e719437e145951c42cb3c16ae4, type: 3}
 --- !u!1 &1871684795 stripped
 GameObject:
@@ -11283,10 +11329,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 100
   currentHP: 0
-  healthBar: {fileID: 0}
-  maxMP: 0
+  healthBar: {fileID: 1294464556}
+  maxMP: 20.1
   currentMP: 0
-  mpBar: {fileID: 0}
+  mpBar: {fileID: 1847708445}
   sprintMPConsumptionRate: 10
   mpRegenRate: 20
 --- !u!114 &1871684799
@@ -11321,6 +11367,19 @@ MonoBehaviour:
   questItems:
   - {fileID: 1141415110}
   playerQuestRanel: {fileID: 869673773}
+--- !u!114 &1871684804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871684795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e4e364fb6978945b7b7a344c86e4ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  katana: {fileID: 922278499}
 --- !u!1 &1877042066
 GameObject:
   m_ObjectHideFlags: 0
