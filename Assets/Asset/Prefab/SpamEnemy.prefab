@@ -47,4 +47,4 @@ MonoBehaviour:
   enemyPrefab: {fileID: 1753337407332211090, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
   spawnCenter: {x: 215.203, y: 100.01, z: 385.03}
   spawnRadius: 50.4
-  spawnInterval: 3.02
+  spawnInterval: 11
