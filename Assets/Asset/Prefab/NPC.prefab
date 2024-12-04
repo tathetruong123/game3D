@@ -1154,8 +1154,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.08, y: 1.1703644, z: 3.21}
-  m_Center: {x: -0.12654877, y: 0.794281, z: 0.04144287}
+  m_Size: {x: 4.6397247, y: 1.1206284, z: 4.7101746}
+  m_Center: {x: -0.55895233, y: 0.769413, z: 0.2422638}
 --- !u!114 &1050683003275503217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1171,7 +1171,9 @@ MonoBehaviour:
   NPCPanel: {fileID: 0}
   NPCTextContent: {fileID: 0}
   content:
+  - "Nhi\u1EC7m v\u1EE5 \u0111\u1EA7u "
   - "H\xE3y ti\xEAu di\u1EC7t 5 Zombie"
+  - "\u0110\u1EC3 nh\u1EADn "
   questItem: {fileID: 2986855909641250363}
   playerQuest: {fileID: 0}
   buttonTakeQuest: {fileID: 0}

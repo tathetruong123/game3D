@@ -877,6 +877,7 @@ MonoBehaviour:
   maxDistance: 50
   animator: {fileID: 6319360111649165223}
   damageZone: {fileID: 5072260712529218531}
+  damBox: {fileID: 2510754727557267277}
   health: {fileID: 6313433805577235003}
   currentState: 0
 --- !u!114 &6313433805577235003
@@ -1168,7 +1169,7 @@ GameObject:
   - component: {fileID: 5072260712529218531}
   m_Layer: 0
   m_Name: DamageZoneZombie
-  m_TagString: Untagged
+  m_TagString: Zombie
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1182,7 +1183,7 @@ Transform:
   m_GameObject: {fileID: 2852994307896182784}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.71, z: 0}
+  m_LocalPosition: {x: 0, y: 0.71, z: 0.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -39,7 +39,18 @@ public class Enermy : MonoBehaviour
         damBox.enabled = false;
         originalePosition = transform.position;
 
+        // Tự động tìm đối tượng với tag "Player"
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            target = player.transform;
+        }
+        else
+        {
+            Debug.LogError("Không tìm thấy đối tượng có tag 'Player'. Hãy gán target thủ công trong Inspector.");
+        }
     }
+
 
     void Update()
     {
