@@ -64,13 +64,20 @@ public class Character : MonoBehaviour
                 break;
         }
 
+        if (playerInput.jumpInput && movementVelocity.y <= 3f)
+        {
+            movementVelocity.y += 1f * Time.timeScale;
+        }
+
         if (characterController.isGrounded)
         {
-            movementVelocity.y = 0;
+            movementVelocity.y += gravity * Time.deltaTime;
+
         }
         else
         {
-            movementVelocity.y += gravity * Time.deltaTime;
+            movementVelocity.y = 0;
+
         }
 
         characterController.Move(movementVelocity);
