@@ -8,14 +8,11 @@ public class Enermy : MonoBehaviour
     public NavMeshAgent navMeshAgent;
     public Transform target; // mục tiêu
 
-    public float radius = 10f; // bán kính tìm kiếm mục tiêu
+    public float radius = 20f; // bán kính tìm kiếm mục tiêu
     public Vector3 originalePosition; // vị trí ban đầu
     public float maxDistance = 50f; // khoảng cách tối đa
 
-
-
     public Animator animator; // khai báo component
-
 
     public DamageZone damageZone;
     public BoxCollider damBox;
@@ -24,6 +21,9 @@ public class Enermy : MonoBehaviour
 
     public string questName; // Đặt trong Inspector hoặc qua script
 
+    private Vector3 randomDestination;
+    private float wanderTimer;
+    public float wanderInterval = 5f; // Khoảng thời gian giữa các lần di chuyển
 
     // state machine
     public enum CharacterState
@@ -33,7 +33,6 @@ public class Enermy : MonoBehaviour
         Die
     }
     public CharacterState currentState; // trạng thái hiện tại
-
 
     void Start()
     {
@@ -52,7 +51,6 @@ public class Enermy : MonoBehaviour
         }
     }
 
-
     void Update()
     {
         if (health.currenHP <= 0)
@@ -63,48 +61,47 @@ public class Enermy : MonoBehaviour
         {
             return;
         }
-        // khoảng cách từ vị trí hiện tại đến vị trí ban đầu
+
         var distanceToOriginal = Vector3.Distance(originalePosition, transform.position);
-        // khoảng cách từ vị trí hiện tại đến mục tiêu
         var distance = Vector3.Distance(target.position, transform.position);
+
         if (distance <= radius && distanceToOriginal <= maxDistance)
         {
-            // di chuyển đến mục tiêu
             navMeshAgent.SetDestination(target.position);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            distance = Vector3.Distance(target.position, transform.position);
             if (distance < 2f)
             {
-                // tấn công
                 ChangeState(CharacterState.Attack);
             }
         }
-
-        if (distance > radius || distanceToOriginal > maxDistance)
+        else if (currentState == CharacterState.Normal)
         {
-            // quay về vị trí ban đầu
+            wanderTimer += Time.deltaTime;
+            if (wanderTimer >= wanderInterval)
+            {
+                wanderTimer = 0f;
+                randomDestination = GetRandomPoint(originalePosition, radius);
+                navMeshAgent.SetDestination(randomDestination);
+            }
+            animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
+        }
+        else if (distance > radius || distanceToOriginal > maxDistance)
+        {
             navMeshAgent.SetDestination(originalePosition);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            // chuyển sang trạng thái đứng yên
-            distance = Vector3.Distance(originalePosition, transform.position);
             if (distance < 1f)
             {
                 animator.SetFloat("Speed", 0);
             }
 
-            // bình thường
             ChangeState(CharacterState.Normal);
         }
-
-
     }
 
-    // chuyển đổi trạng thái
     private void ChangeState(CharacterState newState)
     {
-        // exit current state
         switch (currentState)
         {
             case CharacterState.Normal:
@@ -113,11 +110,11 @@ public class Enermy : MonoBehaviour
                 break;
         }
 
-        // enter new state
         switch (newState)
         {
             case CharacterState.Normal:
                 damageZone.EndAttack();
+                wanderTimer = 0f;
                 break;
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
@@ -129,14 +126,24 @@ public class Enermy : MonoBehaviour
                 if (playerQuest != null)
                 {
                     Debug.Log($"Đang cập nhật nhiệm vụ {questName}");
-                    playerQuest.UpdateQuestProgress(questName, 1); // Cập nhật nhiệm vụ khi quái chết
+                    playerQuest.UpdateQuestProgress(questName, 1);
                 }
                 Destroy(gameObject, 5f);
                 break;
         }
 
-        // update current state
         currentState = newState;
+    }
+
+    private Vector3 GetRandomPoint(Vector3 center, float radius)
+    {
+        Vector3 randomPoint = center + Random.insideUnitSphere * radius;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomPoint, out hit, radius, NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+        return center;
     }
 
     public void ZomAttack()
@@ -153,7 +160,6 @@ public class Enermy : MonoBehaviour
         if (other.gameObject.CompareTag("katana"))
         {
             health.TakeDamage(20);
-            
         }
     }
 }
