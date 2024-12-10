@@ -24,9 +24,8 @@ public class Character : MonoBehaviour
         Normal,
         Attack,
         Jump,
-        Laugh,// happy
-        Hurt,// bi thuong
-        Crouch, // ngồi
+        Laugh,  // Happy
+        Hurt,   // Bị thương
         Die
     }
 
@@ -48,14 +47,20 @@ public class Character : MonoBehaviour
                 if (!stateInfo.IsName("Jump") &&
                     !stateInfo.IsName("Laugh") &&
                     !stateInfo.IsName("Hurt") &&
-                    !stateInfo.IsName("Attack") &&
-                    !stateInfo.IsName("Crouch"))
+                    !stateInfo.IsName("Attack")
+                    )
                 {
                     CalculateMovement();
                 }
                 break;
 
             case CharacterState.Attack:
+            case CharacterState.Jump:
+            case CharacterState.Hurt:
+            case CharacterState.Laugh:
+
+                movementVelocity = Vector3.zero; // Dừng mọi di chuyển khi ở trạng thái đặc biệt
+                animator.SetFloat("Speed", 0); // Dừng animation di chuyển
                 break;
         }
 
@@ -73,12 +78,6 @@ public class Character : MonoBehaviour
 
     void CalculateMovement()
     {
-        if (playerInput.jumpInput)
-        {
-            ChangeState(CharacterState.Jump);
-            playerInput.jumpInput = false;
-            return;
-        }
         if (playerInput.attackInput)
         {
             ChangeState(CharacterState.Attack);
@@ -86,18 +85,10 @@ public class Character : MonoBehaviour
             return;
         }
 
-        if (playerInput.crouchToggle) // Kiểm tra trạng thái cúi
+        if (playerInput.jumpInput)
         {
-            if (curState != CharacterState.Crouch)
-            {
-                ChangeState(CharacterState.Crouch); // Đổi sang trạng thái cúi
-            }
-            else
-            {
-                ChangeState(CharacterState.Normal); // Trở về trạng thái đứng
-            }
-
-            playerInput.crouchToggle = false; // Reset trạng thái toggle
+            ChangeState(CharacterState.Jump);
+            playerInput.jumpInput = false;
             return;
         }
 
@@ -123,27 +114,22 @@ public class Character : MonoBehaviour
         }
     }
 
-
-
-
-    // Chuyển đổi trạng thái
     private void ChangeState(CharacterState newState)
     {
-        // Xóa trạng thái cũ
-        playerInput.attackInput = false;
-
-        // Thoát trạng thái hiện tại
         switch (curState)
         {
             case CharacterState.Normal:
                 break;
+
             case CharacterState.Attack:
-                break;
-            case CharacterState.Crouch:
+            case CharacterState.Jump:
+            case CharacterState.Hurt:
+            case CharacterState.Laugh:
+
+                movementVelocity = Vector3.zero; // Dừng di chuyển khi rời trạng thái đặc biệt
                 break;
         }
 
-        // Vào trạng thái mới
         switch (newState)
         {
             case CharacterState.Normal:
@@ -156,6 +142,7 @@ public class Character : MonoBehaviour
                     ChangeState(CharacterState.Normal);
                 }));
                 break;
+
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
                 StartCoroutine(WaitForAnimation("Attack", () =>
@@ -180,10 +167,6 @@ public class Character : MonoBehaviour
                 }));
                 break;
 
-            case CharacterState.Crouch:
-                animator.SetTrigger("Crouch"); 
-                break;
-
 
             case CharacterState.Die:
                 sword.transform.SetParent(null);
@@ -191,27 +174,22 @@ public class Character : MonoBehaviour
                 animator.SetTrigger("Die");
                 break;
         }
-      
 
-        // Cập nhật trạng thái hiện tại
         curState = newState;
     }
 
     private IEnumerator WaitForAnimation(string animationName, System.Action onComplete)
     {
-        // Đợi cho đến khi hoạt ảnh bắt đầu
         while (!animator.GetCurrentAnimatorStateInfo(0).IsName(animationName))
         {
             yield return null;
         }
 
-        // Đợi cho đến khi hoạt ảnh kết thúc
         while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
         {
             yield return null;
         }
 
-        // Gọi callback sau khi hoàn thành
         onComplete?.Invoke();
     }
 
