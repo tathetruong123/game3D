@@ -9,13 +9,12 @@ public class PlayerQuest : MonoBehaviour
 
     public PlayerQuestPanel playerQuestRanel;
 
-    // Tham chiếu đến UI Panel Victory
-    public GameObject victoryPanel;
-
+    // Nhận nhiệm vụ
     public void TakeQuest(Questitem questItem)
     {
+        // Kiểm tra xem nhiệm vụ đã tồn tại trong danh sách hay chưa
         var check = questItems.FirstOrDefault(x => x.QuestItemName == questItem.QuestItemName);
-        if (check == null)
+        if (check == null) // Nếu chưa có thì thêm vào danh sách
             questItems.Add(questItem);
         Debug.Log("Nhận nhiệm vụ: " + questItem.QuestItemName);
         playerQuestRanel.ShowAllQuestItems(questItems);
@@ -32,6 +31,7 @@ public class PlayerQuest : MonoBehaviour
 
             playerQuestRanel.ShowAllQuestItems(questItems);
 
+            // Kiểm tra nếu hoàn thành nhiệm vụ
             if (quest.CurrentAmount >= quest.QuestTargetAmount)
             {
                 Debug.Log($"Nhiệm vụ '{quest.QuestItemName}' hoàn thành!");
@@ -40,27 +40,15 @@ public class PlayerQuest : MonoBehaviour
         }
     }
 
+    // Xử lý khi hoàn thành nhiệm vụ
     private void CompleteQuest(Questitem quest)
     {
+        // Xử lý logic hoàn thành (ví dụ: trao thưởng, xóa nhiệm vụ...)
         Debug.Log($"Victory: {quest.QuestItemName} đã hoàn thành!");
+        // Xóa nhiệm vụ khỏi danh sách nếu cần
         questItems.Remove(quest);
 
+        // Cập nhật lại danh sách nhiệm vụ
         playerQuestRanel.ShowAllQuestItems(questItems);
-
-        // Hiển thị bảng Victory
-        ShowVictoryPanel();
-    }
-
-    private void ShowVictoryPanel()
-    {
-        if (victoryPanel != null)
-        {
-            victoryPanel.SetActive(true);
-            Debug.Log("Bảng Victory đã được hiển thị!");
-        }
-        else
-        {
-            Debug.LogWarning("Victory Panel chưa được gán trong Inspector!");
-        }
     }
 }
