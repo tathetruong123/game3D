@@ -24,7 +24,7 @@ public class PlayerInput : MonoBehaviour
         // Kiểm tra phím chạy nhanh
         sprintInput = Input.GetKey(KeyCode.LeftShift);
 
-        // Kiểm tra phím tấn công (chuột trái)
+        // Kiểm tra phím tấn công K
         if (!attackInput && Time.timeScale != 0)
         {
             attackInput = Input.GetKeyDown(KeyCode.K);
@@ -40,13 +40,6 @@ public class PlayerInput : MonoBehaviour
         if (!laughInput && Time.timeScale != 0)
         {
             laughInput = Input.GetKeyDown(KeyCode.X); // Nhấn phím X
-        }
-
-        // Kiểm tra cúi (toggle)
-        if (Input.GetKeyDown(KeyCode.C) && Time.timeScale != 0)
-        {
-            isCrouching = !isCrouching; // Đảo trạng thái cúi
-            crouchToggle = isCrouching; // Gửi trạng thái mới
         }
     }
 
