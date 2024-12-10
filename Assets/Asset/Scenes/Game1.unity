@@ -9638,7 +9638,7 @@ MonoBehaviour:
   questItems:
   - {fileID: 1141415110}
   playerQuestRanel: {fileID: 869673773}
-  victoryPanel: {fileID: 0}
+  victoryPanel: {fileID: 1893090852}
 --- !u!114 &1871684804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10079,6 +10079,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1885729611}
   m_CullTransparentMesh: 1
+--- !u!1 &1893090852 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1090173668747134397, guid: 96e7208bed09451409b52c025b7ddea1, type: 3}
+  m_PrefabInstance: {fileID: 1514467954}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1916286504
 GameObject:
   m_ObjectHideFlags: 0
@@ -11524,6 +11529,10 @@ PrefabInstance:
       propertyPath: content.Array.data[2]
       value: "\u0110\u1EC3 nh\u1EADn ph\u1EA7n th\u01B0\u1EDFng "
       objectReference: {fileID: 0}
+    - target: {fileID: 2986855909641250363, guid: b0f9ddba4fef6dc409d7bfd70afbf283, type: 3}
+      propertyPath: CurrentAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3489968777804815923, guid: b0f9ddba4fef6dc409d7bfd70afbf283, type: 3}
       propertyPath: m_Name
       value: NPC
@@ -12059,6 +12068,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1871684801}
+    - target: {fileID: 8122201389927500994, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+      propertyPath: questName
+      value: "Ti\xEAu di\u1EC7t 5 Zombie"
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
