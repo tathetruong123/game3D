@@ -18,6 +18,7 @@ public class Enermy : MonoBehaviour
 
 
     public DamageZone damageZone;
+    public BoxCollider damBox;
 
     public Health health;
 
@@ -35,9 +36,21 @@ public class Enermy : MonoBehaviour
 
     void Start()
     {
+        damBox.enabled = false;
         originalePosition = transform.position;
 
+        // Tự động tìm đối tượng với tag "Player"
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            target = player.transform;
+        }
+        else
+        {
+            Debug.LogError("Không tìm thấy đối tượng có tag 'Player'. Hãy gán target thủ công trong Inspector.");
+        }
     }
+
 
     void Update()
     {
@@ -117,5 +130,22 @@ public class Enermy : MonoBehaviour
 
         // update current state
         currentState = newState;
+    }
+
+    public void ZomAttack()
+    {
+        damBox.enabled = true;
+    }
+    public void EndAttack()
+    {
+        damBox.enabled = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("katana"))
+        {
+            health.TakeDamage(20);
+        }
     }
 }
