@@ -22,6 +22,7 @@ public class Enermy : MonoBehaviour
 
     public Health health;
 
+    public string questName; // Đặt trong Inspector hoặc qua script
 
 
     // state machine
@@ -124,6 +125,12 @@ public class Enermy : MonoBehaviour
                 break;
             case CharacterState.Die:
                 animator.SetTrigger("Die");
+                var playerQuest = FindObjectOfType<PlayerQuest>();
+                if (playerQuest != null)
+                {
+                    Debug.Log($"Đang cập nhật nhiệm vụ {questName}");
+                    playerQuest.UpdateQuestProgress(questName, 1); // Cập nhật nhiệm vụ khi quái chết
+                }
                 Destroy(gameObject, 5f);
                 break;
         }
@@ -146,6 +153,7 @@ public class Enermy : MonoBehaviour
         if (other.gameObject.CompareTag("katana"))
         {
             health.TakeDamage(20);
+            
         }
     }
 }

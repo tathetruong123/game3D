@@ -23,20 +23,29 @@ public class PlayerQuest : MonoBehaviour
 
     public void UpdateQuestProgress(string questName, int amount)
     {
+        // Tìm nhiệm vụ trong danh sách
         var quest = questItems.FirstOrDefault(x => x.QuestItemName == questName);
         if (quest != null)
         {
-            quest.CurrentAmount += amount;
+            quest.CurrentAmount += amount; // Cộng thêm số lượng
+
+            // Giới hạn CurrentAmount không vượt quá QuestTargetAmount
             if (quest.CurrentAmount > quest.QuestTargetAmount)
                 quest.CurrentAmount = quest.QuestTargetAmount;
 
+            // Hiển thị danh sách nhiệm vụ
             playerQuestRanel.ShowAllQuestItems(questItems);
 
+            // Kiểm tra nếu hoàn thành nhiệm vụ
             if (quest.CurrentAmount >= quest.QuestTargetAmount)
             {
-                Debug.Log($"Nhiệm vụ '{quest.QuestItemName}' hoàn thành!");
+                Debug.Log($"Nhiệm vụ '{quest.QuestItemName}' đã hoàn thành!");
                 CompleteQuest(quest);
             }
+        }
+        else
+        {
+            Debug.LogError($"Nhiệm vụ với tên '{questName}' không tồn tại trong danh sách!");
         }
     }
 
@@ -47,20 +56,42 @@ public class PlayerQuest : MonoBehaviour
 
         playerQuestRanel.ShowAllQuestItems(questItems);
 
-        // Hiển thị bảng Victory
-        ShowVictoryPanel();
+        
     }
 
-    private void ShowVictoryPanel()
+
+    void Start()
     {
         if (victoryPanel != null)
         {
-            victoryPanel.SetActive(true);
-            Debug.Log("Bảng Victory đã được hiển thị!");
+            victoryPanel.SetActive(false); // Ẩn bảng Victory khi bắt đầu
         }
-        else
+    }
+    void Update()
+    {
+        // Kiểm tra khi nhấn phím N
+        if (Input.GetKeyDown(KeyCode.N))
         {
-            Debug.LogWarning("Victory Panel chưa được gán trong Inspector!");
+            ShowVictoryPanel();
+        }
+    }
+    // Hàm hiện bảng Victory
+    public void ShowVictoryPanel()
+    {
+        if (victoryPanel != null)
+        {
+            victoryPanel.SetActive(true); // Hiển thị bảng Victory
+            Debug.Log("Hiển thị bảng Victory!");
+            Time.timeScale = 0f; // Tạm dừng trò chơi
+        }
+    }
+
+    // Hàm ẩn bảng Victory (nếu cần)
+    public void HideVictoryPanel()
+    {
+        if (victoryPanel != null)
+        {
+            victoryPanel.SetActive(false); // Ẩn bảng Victory
         }
     }
 }
