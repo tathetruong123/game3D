@@ -1,41 +1,39 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Fusion;
 
-public class Character : MonoBehaviour
+public class Character : NetworkBehaviour
 {
     public CharacterController characterController;
     public float speed = 2f;
     public Vector3 movementVelocity;
     public PlayerInput playerInput;
     public Animator animator;
-
     public DamageZone damageZone;
     public HP HP;
+    public float gravity = 10f;
+    public float jumpHeight = 1;
+    public GameObject sword;
 
-    public float gravity = 10f; // Trọng lực
-    public float jumpHeight = 1; // Chiều cao nhảy tối đa
-
-    public GameObject sword; // Kiếm
-
-    // State machine
     public enum CharacterState
     {
         Normal,
         Attack,
         Jump,
-        Laugh,  // Happy
-        Hurt,   // Bị thương
+        Laugh,
+        Hurt,
         Die
     }
 
-    public CharacterState curState; // Trạng thái hiện tại
+    [Networked] public CharacterState curState { get; set; }
 
-    void FixedUpdate()
+    public override void FixedUpdateNetwork()
     {
+        if (!Object.HasStateAuthority) return; // Đảm bảo chỉ nhân vật do người chơi điều khiển mới thực hiện xử lý mạng
+
         if (HP.currentHP <= 0)
         {
-            ChangeState(CharacterState.Die);
+            RpcChangeState(CharacterState.Die);
             return;
         }
 
@@ -44,11 +42,8 @@ public class Character : MonoBehaviour
         switch (curState)
         {
             case CharacterState.Normal:
-                if (!stateInfo.IsName("Jump") &&
-                    !stateInfo.IsName("Laugh") &&
-                    !stateInfo.IsName("Hurt") &&
-                    !stateInfo.IsName("Attack")
-                    )
+                if (!stateInfo.IsName("Jump") && !stateInfo.IsName("Laugh") &&
+                    !stateInfo.IsName("Hurt") && !stateInfo.IsName("Attack"))
                 {
                     CalculateMovement();
                 }
@@ -58,61 +53,33 @@ public class Character : MonoBehaviour
             case CharacterState.Jump:
             case CharacterState.Hurt:
             case CharacterState.Laugh:
-
-                movementVelocity = Vector3.zero; // Dừng mọi di chuyển khi ở trạng thái đặc biệt
-                animator.SetFloat("Speed", 0); // Dừng animation di chuyển
+                movementVelocity = Vector3.zero;
+                animator.SetFloat("Speed", 0);
                 break;
         }
 
-        if (playerInput.jumpInput && movementVelocity.y <= 3f)
-        {
-            movementVelocity.y += 1f * Time.timeScale;
-        }
-
+        // Xử lý trọng lực
         if (characterController.isGrounded)
         {
-            movementVelocity.y += gravity * Time.deltaTime;
-
+            movementVelocity.y = -gravity * Runner.DeltaTime;
         }
         else
         {
-            movementVelocity.y = 0;
-
+            movementVelocity.y += gravity * Runner.DeltaTime;
         }
 
-        characterController.Move(movementVelocity);
+        characterController.Move(movementVelocity * Runner.DeltaTime);
     }
 
     void CalculateMovement()
     {
-        if (playerInput.attackInput)
-        {
-            ChangeState(CharacterState.Attack);
-            playerInput.attackInput = false;
-            return;
-        }
+        //if (!Object.HasStateAuthority) return;
 
-        if (playerInput.jumpInput)
-        {
-            ChangeState(CharacterState.Jump);
-            playerInput.jumpInput = false;
-            return;
-        }
+        Debug.Log($"PlayerInput của {gameObject.name}: Horiz={playerInput.horizontalInput}, Vert={playerInput.verticalInput}");
 
-        if (playerInput.laughInput)
-        {
-            ChangeState(CharacterState.Laugh);
-            playerInput.laughInput = false;
-            return;
-        }
-
+        // Không reset input ở đây để tránh mất dữ liệu khi cập nhật frame
         float currentSpeed = playerInput.sprintInput ? speed * 2 : speed;
-
-        movementVelocity.Set(playerInput.horizontalInput, 0, playerInput.verticalInput);
-        movementVelocity.Normalize();
-        movementVelocity = Quaternion.Euler(0, -45, 0) * movementVelocity;
-        movementVelocity *= currentSpeed * Time.deltaTime;
-
+        movementVelocity = new Vector3(playerInput.horizontalInput, 0, playerInput.verticalInput).normalized * currentSpeed;
         animator.SetFloat("Speed", movementVelocity.magnitude);
 
         if (movementVelocity != Vector3.zero)
@@ -121,92 +88,29 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void ChangeState(CharacterState newState)
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RpcChangeState(CharacterState newState, RpcInfo info = default)
     {
-        switch (curState)
-        {
-            case CharacterState.Normal:
-                break;
-
-            case CharacterState.Attack:
-            case CharacterState.Jump:
-            case CharacterState.Hurt:
-            case CharacterState.Laugh:
-
-                movementVelocity = Vector3.zero; // Dừng di chuyển khi rời trạng thái đặc biệt
-                break;
-        }
-
+        curState = newState;
         switch (newState)
         {
-            case CharacterState.Normal:
-                break;
-
             case CharacterState.Jump:
                 animator.SetTrigger("Jump");
-                StartCoroutine(WaitForAnimation("Jump", () =>
-                {
-                    ChangeState(CharacterState.Normal);
-                }));
                 break;
-
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
-                StartCoroutine(WaitForAnimation("Attack", () =>
-                {
-                    ChangeState(CharacterState.Normal);
-                }));
                 break;
-
             case CharacterState.Laugh:
                 animator.SetTrigger("Laugh");
-                StartCoroutine(WaitForAnimation("Laugh", () =>
-                {
-                    ChangeState(CharacterState.Normal);
-                }));
                 break;
-
             case CharacterState.Hurt:
                 animator.SetTrigger("Hurt");
-                StartCoroutine(WaitForAnimation("Hurt", () =>
-                {
-                    ChangeState(CharacterState.Normal);
-                }));
                 break;
-
-
             case CharacterState.Die:
                 sword.transform.SetParent(null);
                 sword.GetComponent<Rigidbody>().isKinematic = false;
                 animator.SetTrigger("Die");
                 break;
         }
-
-        curState = newState;
-    }
-
-    private IEnumerator WaitForAnimation(string animationName, System.Action onComplete)
-    {
-        while (!animator.GetCurrentAnimatorStateInfo(0).IsName(animationName))
-        {
-            yield return null;
-        }
-
-        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-        {
-            yield return null;
-        }
-
-        onComplete?.Invoke();
-    }
-
-    public void OnAttack01End()
-    {
-        ChangeState(CharacterState.Normal);
-    }
-
-    public void EndAttack()
-    {
-        // damageZone.Attack();
     }
 }
