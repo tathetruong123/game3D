@@ -1,59 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Fusion;
 using UnityEngine;
 
-public class PlayerInput : MonoBehaviour
+public class PlayerInput : NetworkBehaviour
 {
-    [HideInInspector] public float horizontalInput;
-    [HideInInspector] public float verticalInput;
+    [Networked] public float horizontalInput { get; private set; }
+    [Networked] public float verticalInput { get; private set; }
+    [Networked] public bool attackInput { get; private set; }
+    [Networked] public bool jumpInput { get; private set; }
+    [Networked] public bool laughInput { get; private set; }
+    [Networked] public bool sprintInput { get; private set; }
 
-    public bool attackInput;   // Tấn công
-    public bool jumpInput;     // Nhảy
-    public bool crouchToggle;  // Cúi (bật/tắt)
-    public bool laughInput;    // Cười
-    public bool sprintInput;   // Chạy nhanh
-
-    private bool isCrouching = false; // Trạng thái hiện tại của cúi
-
-    private void Update()
+    public override void FixedUpdateNetwork()
     {
-        // Lấy giá trị đầu vào di chuyển
+        if (!Object.HasStateAuthority) return; // Chỉ người chơi mới cập nhật input
+
+        // Lấy đầu vào di chuyển
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-
-        // Kiểm tra phím chạy nhanh
         sprintInput = Input.GetKey(KeyCode.LeftShift);
 
-        // Kiểm tra phím tấn công K
-        if (!attackInput && Time.timeScale != 0)
-        {
-            attackInput = Input.GetKeyDown(KeyCode.K);
-        }
+        attackInput = Input.GetKey(KeyCode.K);
+        jumpInput = Input.GetKey(KeyCode.J);
+        laughInput = Input.GetKey(KeyCode.X);
 
-        // Kiểm tra phím nhảy
-        if (!jumpInput && Time.timeScale != 0)
-        {
-            jumpInput = Input.GetKeyDown(KeyCode.J); // Nhấn phím J
-        }
-
-        // Kiểm tra phím cười
-        if (!laughInput && Time.timeScale != 0)
-        {
-            laughInput = Input.GetKeyDown(KeyCode.X); // Nhấn phím X
-        }
+        Debug.Log($"Input: Horiz={horizontalInput}, Vert={verticalInput}, Sprint={sprintInput}");
     }
 
-    private void OnDisable()
-    {
-        // Đặt lại tất cả các trạng thái đầu vào
-        horizontalInput = 0;
-        verticalInput = 0;
-        attackInput = false;
-        jumpInput = false;
-        crouchToggle = false;
-        laughInput = false;
-        sprintInput = false;
-
-        isCrouching = false;
-    }
+    public void ResetAttackInput() => attackInput = false;
+    public void ResetJumpInput() => jumpInput = false;
+    public void ResetLaughInput() => laughInput = false;
 }

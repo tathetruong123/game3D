@@ -1,38 +1,39 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Fusion;
 
-public class HP : MonoBehaviour
+public class HP : NetworkBehaviour
 {
-    public float maxHP; // Máu tối đa
-    public float currentHP; // Máu hiện tại
-    public Slider healthBar; // Thanh máu
+    [Networked] public float currentHP { get; set; } // Đồng bộ máu
+    [Networked] public float currentMP { get; set; } // Đồng bộ mana
 
-    public float maxMP; // Mana tối đa
-    public float currentMP; // Mana hiện tại
-    public Slider mpBar; // Thanh MP
+    public float maxHP = 100f;
+    public float maxMP = 50f;
+    public float sprintMPConsumptionRate = 10f;
+    public float mpRegenRate = 2f;
 
-    public float sprintMPConsumptionRate = 10f; // Tốc độ tiêu hao MP khi chạy nhanh
-    public float mpRegenRate = 2f; // Tốc độ hồi MP mỗi giây
-    private bool isSprinting;
+    public Slider healthBar;
+    public Slider mpBar;
+    public TMP_Text healingPotionText;
+    public TMP_Text manaPotionText;
 
-    public AudioClip healSound; // Âm thanh hồi máu
-    public AudioClip manaSound; // Âm thanh hồi mana
+    public AudioClip healSound;
+    public AudioClip manaSound;
     private AudioSource audioSource;
 
-    public int healingPotionCount = 20; // Số lượng bình hồi máu/mana ban đầu
-    public int manaPotionCount = 20; // Số lượng bình mana ban đầu
+    public int healingPotionCount = 20;
+    public int manaPotionCount = 20;
+    private bool isSprinting;
 
-    public TMP_Text healingPotionText; // TextMeshPro để hiển thị số bình hồi máu
-    public TMP_Text manaPotionText; // TextMeshPro để hiển thị số bình mana
-
-    private void Start()
+    public override void Spawned()
     {
-        // Khởi tạo giá trị ban đầu
-        currentHP = maxHP;
-        currentMP = maxMP;
+        if (Object.HasStateAuthority)
+        {
+            currentHP = maxHP;
+            currentMP = maxMP;
+        }
 
-        // Cập nhật thanh máu và mana
         if (healthBar != null)
         {
             healthBar.maxValue = maxHP;
@@ -45,104 +46,72 @@ public class HP : MonoBehaviour
             mpBar.value = currentMP;
         }
 
-        // Khởi tạo AudioSource
         audioSource = GetComponent<AudioSource>();
-
-        // Cập nhật số bình khi bắt đầu
         UpdatePotionText();
     }
 
-    private void Update()
+    public override void FixedUpdateNetwork()
     {
-        // Kiểm tra trạng thái chạy nhanh
+        if (!Object.HasStateAuthority) return;
+
         isSprinting = Input.GetKey(KeyCode.LeftShift) && currentMP > 0;
 
         if (isSprinting)
         {
-            ConsumeMP(Time.deltaTime * sprintMPConsumptionRate);
+            RPC_ConsumeMP(Time.deltaTime * sprintMPConsumptionRate);
         }
         else
         {
-            RegenerateMP(Time.deltaTime * mpRegenRate);
+            RPC_RegenerateMP(Time.deltaTime * mpRegenRate);
         }
 
-        // Hồi máu khi nhấn phím số 1 (nếu còn bình)
         if (Input.GetKeyDown(KeyCode.Alpha1) && healingPotionCount > 0)
         {
-            Heal(20); // Hồi 20 máu
-            healingPotionCount--; // Trừ đi 1 bình
-            UpdatePotionText(); // Cập nhật số bình còn lại
+            RPC_Heal(20);
+            healingPotionCount--;
+            UpdatePotionText();
         }
 
-        // Hồi mana khi nhấn phím số 2 (nếu còn bình)
         if (Input.GetKeyDown(KeyCode.Alpha2) && manaPotionCount > 0)
         {
-            RestoreMana(15); // Hồi 15 mana
-            manaPotionCount--; // Trừ đi 1 bình
-            UpdatePotionText(); // Cập nhật số bình còn lại
+            RPC_RestoreMana(15);
+            manaPotionCount--;
+            UpdatePotionText();
         }
 
-        // Kiểm tra nếu máu về 0
         if (currentHP <= 0)
         {
             Debug.Log("Nhân vật đã chết!");
-            // Xử lý logic khi nhân vật chết, ví dụ kết thúc trò chơi
         }
     }
 
-    private void Heal(float amount)
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_Heal(float amount)
     {
-        if (currentHP < maxHP)
-        {
-            currentHP += amount;
-            currentHP = Mathf.Min(currentHP, maxHP);
-            UpdateHealthBar();
-
-            if (healSound != null && audioSource != null)
-            {
-                audioSource.PlayOneShot(healSound);
-            }
-
-            Debug.Log($"Hồi máu: {currentHP}/{maxHP}");
-        }
-        else
-        {
-            Debug.Log("Máu đã đầy!");
-        }
+        currentHP = Mathf.Min(currentHP + amount, maxHP);
+        UpdateHealthBar();
+        PlaySound(healSound);
     }
 
-    private void RestoreMana(float amount)
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RestoreMana(float amount)
     {
-        if (currentMP < maxMP)
-        {
-            currentMP += amount;
-            currentMP = Mathf.Min(currentMP, maxMP);
-            UpdateMPBar();
-
-            if (manaSound != null && audioSource != null)
-            {
-                audioSource.PlayOneShot(manaSound);
-            }
-
-            Debug.Log($"Hồi mana: {currentMP}/{maxMP}");
-        }
-        else
-        {
-            Debug.Log("Mana đã đầy!");
-        }
+        currentMP = Mathf.Min(currentMP + amount, maxMP);
+        UpdateMPBar();
+        PlaySound(manaSound);
     }
 
-    private void ConsumeMP(float amount)
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_ConsumeMP(float amount)
     {
-        currentMP -= amount;
-        currentMP = Mathf.Max(0, currentMP);
+        currentMP = Mathf.Max(0, currentMP - amount);
         UpdateMPBar();
     }
 
-    private void RegenerateMP(float amount)
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RegenerateMP(float amount)
     {
-        currentMP += amount;
-        currentMP = Mathf.Min(maxMP, currentMP);
+        currentMP = Mathf.Min(maxMP, currentMP + amount);
         UpdateMPBar();
     }
 
@@ -164,30 +133,36 @@ public class HP : MonoBehaviour
 
     private void UpdatePotionText()
     {
-        // Cập nhật số bình hồi máu và mana trong TextMeshPro
         if (healingPotionText != null)
         {
             healingPotionText.text = healingPotionCount.ToString();
         }
-
         if (manaPotionText != null)
         {
             manaPotionText.text = manaPotionCount.ToString();
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void PlaySound(AudioClip clip)
     {
-        if (other.gameObject.CompareTag("Zombie"))
+        if (clip != null && audioSource != null)
         {
-            TakeDamage(2); // Giảm máu khi bị Zombie tấn công
+            audioSource.PlayOneShot(clip);
         }
     }
 
-    public virtual void TakeDamage(float damage)
+    public void OnTriggerEnter(Collider other)
     {
-        currentHP -= damage;
-        currentHP = Mathf.Max(0, currentHP);
+        if (other.gameObject.CompareTag("Zombie"))
+        {
+            RPC_TakeDamage(2);
+        }
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_TakeDamage(float damage)
+    {
+        currentHP = Mathf.Max(0, currentHP - damage);
         UpdateHealthBar();
 
         if (currentHP <= 0)
