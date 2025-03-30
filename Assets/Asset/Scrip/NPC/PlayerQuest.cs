@@ -2,41 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Fusion;
+using System.Globalization;
 
-public class PlayerQuest : MonoBehaviour
+public class PlayerQuest : NetworkBehaviour
 {
     public List<Questitem> questItems = new List<Questitem>();
-
-    public PlayerQuestPanel playerQuestRanel;
-
-    // Tham chiếu đến UI Panel Victory
+    public PlayerQuestPanel playerQuestPanel;
     public GameObject victoryPanel;
 
     public void TakeQuest(Questitem questItem)
+    {
+        if (!Object.HasInputAuthority) return;
+        RPC_TakeQuest(questItem);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_TakeQuest(Questitem questItem)
     {
         var check = questItems.FirstOrDefault(x => x.QuestItemName == questItem.QuestItemName);
         if (check == null)
             questItems.Add(questItem);
         Debug.Log("Nhận nhiệm vụ: " + questItem.QuestItemName);
-        playerQuestRanel.ShowAllQuestItems(questItems);
+        playerQuestPanel.ShowAllQuestItems(questItems);
     }
 
     public void UpdateQuestProgress(string questName, int amount)
     {
-        // Tìm nhiệm vụ trong danh sách
+        if (!Object.HasInputAuthority) return;
+        RPC_UpdateQuestProgress(questName, amount);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_UpdateQuestProgress(string questName, int amount)
+    {
         var quest = questItems.FirstOrDefault(x => x.QuestItemName == questName);
         if (quest != null)
         {
-            quest.CurrentAmount += amount; // Cộng thêm số lượng
-
-            // Giới hạn CurrentAmount không vượt quá QuestTargetAmount
+            quest.CurrentAmount += amount;
             if (quest.CurrentAmount > quest.QuestTargetAmount)
                 quest.CurrentAmount = quest.QuestTargetAmount;
-
-            // Hiển thị danh sách nhiệm vụ
-            playerQuestRanel.ShowAllQuestItems(questItems);
-
-            // Kiểm tra nếu hoàn thành nhiệm vụ
+            playerQuestPanel.ShowAllQuestItems(questItems);
             if (quest.CurrentAmount >= quest.QuestTargetAmount)
             {
                 Debug.Log($"Nhiệm vụ '{quest.QuestItemName}' đã hoàn thành!");
@@ -53,45 +59,40 @@ public class PlayerQuest : MonoBehaviour
     {
         Debug.Log($"Victory: {quest.QuestItemName} đã hoàn thành!");
         questItems.Remove(quest);
-
-        playerQuestRanel.ShowAllQuestItems(questItems);
-
-        
+        playerQuestPanel.ShowAllQuestItems(questItems);
     }
-
 
     void Start()
     {
         if (victoryPanel != null)
         {
-            victoryPanel.SetActive(false); // Ẩn bảng Victory khi bắt đầu
+            victoryPanel.SetActive(false);
         }
     }
+
     void Update()
     {
-        // Kiểm tra khi nhấn phím N
         if (Input.GetKeyDown(KeyCode.N))
         {
             ShowVictoryPanel();
         }
     }
-    // Hàm hiện bảng Victory
+
     public void ShowVictoryPanel()
     {
         if (victoryPanel != null)
         {
-            victoryPanel.SetActive(true); // Hiển thị bảng Victory
+            victoryPanel.SetActive(true);
             Debug.Log("Hiển thị bảng Victory!");
-            Time.timeScale = 0f; // Tạm dừng trò chơi
+            Time.timeScale = 0f;
         }
     }
 
-    // Hàm ẩn bảng Victory (nếu cần)
     public void HideVictoryPanel()
     {
         if (victoryPanel != null)
         {
-            victoryPanel.SetActive(false); // Ẩn bảng Victory
+            victoryPanel.SetActive(false);
         }
     }
 }

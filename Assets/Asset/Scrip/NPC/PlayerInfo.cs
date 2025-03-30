@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Fusion;
 
-public class PlayerInfo : MonoBehaviour
+public class PlayerInfo : NetworkBehaviour
 {
     public GameObject playerPanel; // Panel gốc
     public GameObject panelRightInfo; // Panel thông tin
@@ -30,11 +31,19 @@ public class PlayerInfo : MonoBehaviour
         panelRightInventory.SetActive(false); // Ẩn Panel Right Info Inventory
     }
 
-    // Hàm thoát game
+    // Hàm thoát game (chỉ chủ phòng mới có quyền thực hiện)
     public void QuitGame()
     {
-        Debug.Log("Game Over!");
-        // Code chuyển scene hoặc thoát game
+        if (Object.HasStateAuthority)
+        {
+            Debug.Log("Game Over!");
+            RPC_QuitGame();
+        }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_QuitGame()
+    {
         SceneManager.LoadScene("MainMenu");
     }
 }

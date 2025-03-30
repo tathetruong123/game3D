@@ -7,7 +7,7 @@ public class Items : MonoBehaviour
     public enum ItemType { HP, MP }
     public ItemType itemType; // Loại vật phẩm (HP hoặc MP)
     public int amount; // Số lượng HP/MP cần thêm vào rương
-    public Iventory inventory; // Rương (đối tượng chứa HP và MP)
+    public Inventory inventory; // Rương (đối tượng chứa HP và MP)
 
     private void OnTriggerEnter(Collider other)
     {

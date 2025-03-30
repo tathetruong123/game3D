@@ -1337,7 +1337,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   questItems:
   - {fileID: 0}
-  playerQuestRanel: {fileID: 0}
+  playerQuestPanel: {fileID: 0}
   victoryPanel: {fileID: 0}
 --- !u!114 &1893286574592942084
 MonoBehaviour:
@@ -1372,6 +1372,7 @@ MonoBehaviour:
   - {fileID: 8442108725953430359}
   - {fileID: 3579254170622449635}
   - {fileID: 7997962992309205700}
+  - {fileID: 2357926868962645090}
   - {fileID: 1841201564863422067}
   - {fileID: 8826931798150738212}
   ForceRemoteRenderTimeframe: 0

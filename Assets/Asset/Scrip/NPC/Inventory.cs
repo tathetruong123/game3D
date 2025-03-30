@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Fusion;
 
-public class Iventory : MonoBehaviour
+public class Inventory : NetworkBehaviour
 {
-    public int currentHP = 0;  // HP hiện tại trong rương
-    public int currentMP = 0;  // MP hiện tại trong rương
+    [Networked] public int currentHP { get; set; }  // HP hiện tại trong rương, được đồng bộ hóa
+    [Networked] public int currentMP { get; set; }  // MP hiện tại trong rương, được đồng bộ hóa
 
     public TextMeshProUGUI hpText; // Hiển thị HP trong UI
     public TextMeshProUGUI mpText; // Hiển thị MP trong UI
@@ -14,12 +15,26 @@ public class Iventory : MonoBehaviour
     // Hàm cộng HP vào rương
     public void AddHP(int amount)
     {
+        if (!Object.HasInputAuthority) return;
+        RPC_AddHP(amount);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_AddHP(int amount)
+    {
         currentHP += amount;
         UpdateUI();
     }
 
     // Hàm cộng MP vào rương
     public void AddMP(int amount)
+    {
+        if (!Object.HasInputAuthority) return;
+        RPC_AddMP(amount);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_AddMP(int amount)
     {
         currentMP += amount;
         UpdateUI();
