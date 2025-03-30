@@ -2,22 +2,20 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Fusion;
 
-public class Npc : MonoBehaviour
+public class Npc : NetworkBehaviour
 {
-    public GameObject NPCPanel;//tham chiếu đến panel
-    public TextMeshProUGUI NPCTextContent;//tham chiếu đến text content
-    public string[] content;// nội dung của NPC
+    public GameObject NPCPanel;
+    public TextMeshProUGUI NPCTextContent;
+    public string[] content;
 
-    //nhiệm vụ của NPC
     public Questitem questItem;
-
-    //player
-    public PlayerQuest playerQuest;
-
     public GameObject buttonTakeQuest;
 
-    Coroutine coroutine;
+    private PlayerQuest playerQuest;
+    private Coroutine coroutine;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -27,15 +25,19 @@ public class Npc : MonoBehaviour
             coroutine = StartCoroutine(ReadContent());
         }
     }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             NPCPanel.SetActive(false);
-            StopCoroutine(coroutine);
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
         }
     }
-    // Start is called before the first frame update
+
     void Start()
     {
         NPCPanel.SetActive(false);
@@ -45,33 +47,43 @@ public class Npc : MonoBehaviour
 
     IEnumerator ReadContent()
     {
-
         foreach (var line in content)
         {
             NPCTextContent.text = "";
-            for (int i = 0; i < line.Length; i++)
+            foreach (char c in line)
             {
-                NPCTextContent.text += line[i];
+                NPCTextContent.text += c;
                 yield return new WaitForSeconds(0.1f);
             }
-
             yield return new WaitForSeconds(0.5f);
         }
         buttonTakeQuest.SetActive(true);
     }
+
     public void SkipContent()
     {
-        StopCoroutine(coroutine);// hiện nút nhận nhiệm vụ
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
     }
 
     public void TakeQuest()
     {
         if (playerQuest != null)
         {
+            RPC_TakeQuest(playerQuest.Object.InputAuthority);
+        }
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_TakeQuest(PlayerRef playerRef)
+    {
+        if (playerQuest != null && playerQuest.Object.InputAuthority == playerRef)
+        {
             playerQuest.TakeQuest(questItem);
             buttonTakeQuest.SetActive(false);
             NPCPanel.SetActive(false);
         }
     }
-
 }
