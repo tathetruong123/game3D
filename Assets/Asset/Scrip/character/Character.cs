@@ -7,13 +7,14 @@ public class Character : NetworkBehaviour
     public CharacterController characterController;
     public float speed = 2f;
     public Vector3 movementVelocity;
-    public PlayerInput playerInput;
     public Animator animator;
     public DamageZone damageZone;
     public HP HP;
     public float gravity = 10f;
-    public float jumpHeight = 1;
+    public float jumpHeight = 2f;
     public GameObject sword;
+    public float attackRange = 2.5f;
+    public int attackDamage = 30;
 
     public enum CharacterState
     {
@@ -29,7 +30,7 @@ public class Character : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (!Object.HasStateAuthority) return; // Đảm bảo chỉ nhân vật do người chơi điều khiển mới thực hiện xử lý mạng
+        if (!Object.HasStateAuthority) return;
 
         if (HP.currentHP <= 0)
         {
@@ -37,28 +38,86 @@ public class Character : NetworkBehaviour
             return;
         }
 
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        HandleInput();
+        HandleMovement();
+    }
 
-        switch (curState)
+    void HandleInput()
+    {
+        if (curState != CharacterState.Normal) return;
+
+        if (Input.GetKey(KeyCode.K))
         {
-            case CharacterState.Normal:
-                if (!stateInfo.IsName("Jump") && !stateInfo.IsName("Laugh") &&
-                    !stateInfo.IsName("Hurt") && !stateInfo.IsName("Attack"))
-                {
-                    CalculateMovement();
-                }
-                break;
+            StartCoroutine(PerformAttack());
+        }
+        else if (Input.GetKey(KeyCode.J))
+        {
+            StartCoroutine(PerformAction(CharacterState.Jump, 1.0f));
+        }
+        else if (Input.GetKey(KeyCode.X))
+        {
+            StartCoroutine(PerformAction(CharacterState.Laugh, 1.5f));
+        }
+    }
 
-            case CharacterState.Attack:
-            case CharacterState.Jump:
-            case CharacterState.Hurt:
-            case CharacterState.Laugh:
-                movementVelocity = Vector3.zero;
-                animator.SetFloat("Speed", 0);
-                break;
+    IEnumerator PerformAttack()
+    {
+        RpcChangeState(CharacterState.Attack);
+        yield return new WaitForSeconds(0.3f);
+        AttackNearestEnemy();
+        yield return new WaitForSeconds(0.5f);
+        RpcChangeState(CharacterState.Normal);
+    }
+
+    void AttackNearestEnemy()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
+        float closestDistance = float.MaxValue;
+        Health closestEnemy = null;
+
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Enemy"))
+            {
+                float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestEnemy = hitCollider.GetComponent<Health>();
+                }
+            }
         }
 
-        // Xử lý trọng lực
+        if (closestEnemy != null)
+        {
+            closestEnemy.TakeDamage(attackDamage);
+        }
+    }
+
+    IEnumerator PerformAction(CharacterState state, float duration)
+    {
+        RpcChangeState(state);
+        yield return new WaitForSeconds(duration);
+        RpcChangeState(CharacterState.Normal);
+    }
+
+    void HandleMovement()
+    {
+        if (curState != CharacterState.Normal) return;
+
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
+        bool sprintInput = Input.GetKey(KeyCode.LeftShift);
+
+        float currentSpeed = sprintInput ? speed * 2 : speed;
+        movementVelocity = new Vector3(horizontalInput, 0, verticalInput).normalized * currentSpeed;
+        animator.SetFloat("Speed", movementVelocity.magnitude);
+
+        if (movementVelocity != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(movementVelocity);
+        }
+
         if (characterController.isGrounded)
         {
             movementVelocity.y = -gravity * Runner.DeltaTime;
@@ -71,31 +130,23 @@ public class Character : NetworkBehaviour
         characterController.Move(movementVelocity * Runner.DeltaTime);
     }
 
-    void CalculateMovement()
-    {
-        //if (!Object.HasStateAuthority) return;
-
-        Debug.Log($"PlayerInput của {gameObject.name}: Horiz={playerInput.horizontalInput}, Vert={playerInput.verticalInput}");
-
-        // Không reset input ở đây để tránh mất dữ liệu khi cập nhật frame
-        float currentSpeed = playerInput.sprintInput ? speed * 2 : speed;
-        movementVelocity = new Vector3(playerInput.horizontalInput, 0, playerInput.verticalInput).normalized * currentSpeed;
-        animator.SetFloat("Speed", movementVelocity.magnitude);
-
-        if (movementVelocity != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(movementVelocity);
-        }
-    }
-
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void RpcChangeState(CharacterState newState, RpcInfo info = default)
     {
+        if (curState == newState) return;
         curState = newState;
+
+        animator.ResetTrigger("Jump");
+        animator.ResetTrigger("Attack");
+        animator.ResetTrigger("Laugh");
+        animator.ResetTrigger("Hurt");
+        animator.ResetTrigger("Die");
+
         switch (newState)
         {
             case CharacterState.Jump:
                 animator.SetTrigger("Jump");
+                movementVelocity.y = Mathf.Sqrt(2 * jumpHeight * gravity);
                 break;
             case CharacterState.Attack:
                 animator.SetTrigger("Attack");
