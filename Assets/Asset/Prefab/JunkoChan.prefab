@@ -1089,6 +1089,7 @@ GameObject:
   - component: {fileID: 294536013553344161}
   - component: {fileID: 1841201564863422067}
   - component: {fileID: 8826931798150738212}
+  - component: {fileID: -6010640716016392308}
   m_Layer: 0
   m_Name: JunkoChan
   m_TagString: Player
@@ -1126,7 +1127,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 4eb1d3c511dcf0647bfc119ed3a777c2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -1193,13 +1194,14 @@ MonoBehaviour:
   characterController: {fileID: 3888625725711776094}
   speed: 4
   movementVelocity: {x: 0, y: 0, z: 0}
-  playerInput: {fileID: 3579254170622449635}
   animator: {fileID: 3881596060852106543}
   damageZone: {fileID: 0}
   HP: {fileID: 8442108725953430359}
   gravity: 0.01
   jumpHeight: 1.99
   sword: {fileID: 8542512997415338307}
+  attackRange: 2.5
+  attackDamage: 30
   _curState: 0
 --- !u!82 &4195083988212371523
 AudioSource:
@@ -1316,8 +1318,8 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.6
-  m_Radius: 0.2
+  m_Height: 0
+  m_Radius: 0.15
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.001
@@ -1375,6 +1377,7 @@ MonoBehaviour:
   - {fileID: 2357926868962645090}
   - {fileID: 1841201564863422067}
   - {fileID: 8826931798150738212}
+  - {fileID: -6010640716016392308}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &1841201564863422067
 MonoBehaviour:
@@ -1403,6 +1406,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f80e21d7e90eade448babaec999e5ec8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-6010640716016392308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4001188968870618631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2804f2b25a17f65479d7e93fc4794787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4030130697217403701
