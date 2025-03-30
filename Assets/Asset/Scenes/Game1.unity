@@ -4236,6 +4236,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 16593919018152233, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+      propertyPath: m_Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 16593919018152233, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+      propertyPath: m_Radius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 16593919018152233, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+      propertyPath: m_Center.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 16593919018152233, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
+      propertyPath: m_StepOffset
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 64102539971797855, guid: f35c8874ee6b9ab4a8d7bce1b3045381, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5109,7 +5125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1069784154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5130,7 +5146,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: "Nhi\u1EC7m v\u1EE5  \n\u0110\xE1nh b\u1EA1i 5 Zobie\n\t0/5"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5139,8 +5155,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8110,6 +8126,7 @@ GameObject:
   - component: {fileID: 1570916732}
   - component: {fileID: 1570916736}
   - component: {fileID: 1570916737}
+  - component: {fileID: 1570916738}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -8232,6 +8249,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPanel: {fileID: 1158776284}
+--- !u!114 &1570916738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570916731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 467750396
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 1570916736}
+  - {fileID: 1570916737}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &1582475759
 GameObject:
   m_ObjectHideFlags: 0

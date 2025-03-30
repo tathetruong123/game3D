@@ -789,8 +789,8 @@ Transform:
   m_GameObject: {fileID: 3747498328209186964}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0.703}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0, y: -0.38292, z: 0.7247}
+  m_LocalScale: {x: 1.382963, y: 1.382963, z: 1.382963}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4556914064905736081}
@@ -1197,7 +1197,7 @@ MonoBehaviour:
   animator: {fileID: 3881596060852106543}
   damageZone: {fileID: 0}
   HP: {fileID: 8442108725953430359}
-  gravity: 0.01
+  gravity: 1
   jumpHeight: 1.99
   sword: {fileID: 8542512997415338307}
   attackRange: 2.5
@@ -1318,13 +1318,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 0
-  m_Radius: 0.15
+  m_Height: 1.2
+  m_Radius: 0.3
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0
   m_SkinWidth: 0.001
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.8, z: 0}
+  m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!114 &2357926868962645090
 MonoBehaviour:
   m_ObjectHideFlags: 0
