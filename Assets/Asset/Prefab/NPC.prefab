@@ -1154,8 +1154,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.6397247, y: 1.1206284, z: 4.7101746}
-  m_Center: {x: -0.55895233, y: 0.769413, z: 0.2422638}
+  m_Size: {x: 11.072281, y: 5.379944, z: 4.7101746}
+  m_Center: {x: 2.6573257, y: 2.8990707, z: 0.2422638}
 --- !u!114 &1050683003275503217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1175,7 +1175,6 @@ MonoBehaviour:
   - "H\xE3y ti\xEAu di\u1EC7t 5 Zombie"
   - "\u0110\u1EC3 nh\u1EADn "
   questItem: {fileID: 2986855909641250363}
-  playerQuest: {fileID: 0}
   buttonTakeQuest: {fileID: 0}
 --- !u!114 &2986855909641250363
 MonoBehaviour:
@@ -1191,7 +1190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   QuestItemName: "Ti\xEAu di\u1EC7t 5 Zombie"
   QuestTargetAmount: 5
-  CurrentAmount: 0
+  _CurrentAmount: 0
   TargetItemTag: Zombie
 --- !u!1 &3679817010824480902
 GameObject:
