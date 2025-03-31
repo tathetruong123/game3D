@@ -10,7 +10,7 @@ public class TabPanel : NetworkBehaviour
 
     void Update()
     {
-        if (!Object.HasInputAuthority) return;
+        if (!HasInputAuthority) return;
 
         // Kiểm tra nếu người chơi nhấn phím Tab
         if (Input.GetKeyDown(KeyCode.Tab))
