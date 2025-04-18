@@ -47,7 +47,7 @@ public class Enermy : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Không tìm thấy đối tượng có tag 'Player'. Hãy gán target thủ công trong Inspector.");
+            
         }
     }
 
