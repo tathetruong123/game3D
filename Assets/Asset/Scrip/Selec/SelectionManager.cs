@@ -12,8 +12,8 @@ public class SelectionManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        buttonMale.onClick.AddListener(() => OnButtonClick("Male"));
-        buttonFemale.onClick.AddListener(() => OnButtonClick("Female"));
+        buttonMale.onClick.AddListener(() => OnButtonClick("Selection1"));
+        buttonFemale.onClick.AddListener(() => OnButtonClick("Selection2"));
 
 
     }
@@ -25,7 +25,7 @@ public class SelectionManager : MonoBehaviour
 
         PlayerPrefs.GetString("PlayerName", playerName);
         PlayerPrefs.SetString("PlayerClass", playerClass);
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Game1");
 
     }
 }
