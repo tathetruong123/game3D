@@ -19,7 +19,24 @@ using UnityEngine;
             }
             return JsonUtility.FromJson<PlayerData>(json);
         }
+
+    public static void Save2(PlayerData playerData)
+    {
+        try
+        {
+            var json = JsonUtility.ToJson(playerData);
+            var path = Application.persistentDataPath + "/playerData.json";
+            System.IO.File.WriteAllText(path, json);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
     }
+
+
+
+}
 
 
 
