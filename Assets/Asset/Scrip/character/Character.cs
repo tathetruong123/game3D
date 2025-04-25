@@ -6,14 +6,10 @@ public class Character : NetworkBehaviour
 {
     public CharacterController characterController;
     public float speed = 2f;
-    public Vector3 movementVelocity;
-    public PlayerInput playerInput;
+    private Vector3 velocity;
     public Animator animator;
-    public DamageZone damageZone;
-    public HP HP;
-    public float gravity = 10f;
-    public float jumpHeight = 2f;
-    public GameObject sword;
+    public float gravity = 20f;
+    public float jumpForce = 8f;
     public float attackRange = 2.5f;
     public int attackDamage = 30;
 
@@ -22,22 +18,15 @@ public class Character : NetworkBehaviour
         Normal,
         Attack,
         Jump,
-        Hurt,
         Laugh,
         Die
     }
 
-    public CharacterState curState = CharacterState.Normal;
+    [Networked] public CharacterState CurrentState { get; set; }
 
     public override void FixedUpdateNetwork()
     {
-        if (!Object.HasStateAuthority) return;
-
-        if (HP.currentHP <= 0)
-        {
-            RpcChangeState(CharacterState.Die);
-            return;
-        }
+        if (!HasInputAuthority || CurrentState == CharacterState.Die) return;
 
         HandleInput();
         HandleMovement();
@@ -45,21 +34,64 @@ public class Character : NetworkBehaviour
 
     void HandleInput()
     {
-        if (curState != CharacterState.Normal) return;
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (CurrentState != CharacterState.Normal) return;
 
-        if (Input.GetKey(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             StartCoroutine(PerformAttack());
         }
-        else if (Input.GetKey(KeyCode.J))
+        else if (Input.GetKeyDown(KeyCode.J) && characterController.isGrounded)
         {
-            StartCoroutine(PerformAction(CharacterState.Jump, 1.0f));
+            Jump();
         }
-        else if (Input.GetKey(KeyCode.X))
+        else if (Input.GetKeyDown(KeyCode.X))
         {
             StartCoroutine(PerformAction(CharacterState.Laugh, 1.5f));
         }
+    }
+
+    void HandleMovement()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift);
+        float moveSpeed = isSprinting ? speed * 2 : speed;
+
+        Vector3 inputDir = new Vector3(h, 0, v).normalized;
+
+        if (inputDir.magnitude > 0)
+        {
+            Vector3 move = inputDir * moveSpeed;
+            move.y = velocity.y;
+            velocity = move;
+
+            characterController.Move(velocity * Runner.DeltaTime);
+            transform.rotation = Quaternion.LookRotation(inputDir);
+
+            animator.SetFloat("Speed", moveSpeed);
+        }
+        else
+        {
+            velocity.x = 0;
+            velocity.z = 0;
+            characterController.Move(velocity * Runner.DeltaTime);
+            animator.SetFloat("Speed", 0f);
+        }
+
+        if (characterController.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+        else
+        {
+            velocity.y += -gravity * Runner.DeltaTime;
+        }
+    }
+
+    void Jump()
+    {
+        velocity.y = jumpForce;
+        RpcChangeState(CharacterState.Jump);
     }
 
     IEnumerator PerformAttack()
@@ -73,26 +105,15 @@ public class Character : NetworkBehaviour
 
     void AttackNearestEnemy()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
-        float closestDistance = float.MaxValue;
-        Health closestEnemy = null;
-
-        foreach (var hitCollider in hitColliders)
+        Collider[] hits = Physics.OverlapSphere(transform.position, attackRange);
+        foreach (var hit in hits)
         {
-            if (hitCollider.CompareTag("Enemy"))
+            if (hit.CompareTag("Enemy"))
             {
-                float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestEnemy = hitCollider.GetComponent<Health>();
-                }
+                var hp = hit.GetComponent<Health>();
+                hp?.TakeDamage(attackDamage);
+                break;
             }
-        }
-
-        if (closestEnemy != null)
-        {
-            closestEnemy.TakeDamage(attackDamage);
         }
     }
 
@@ -103,65 +124,26 @@ public class Character : NetworkBehaviour
         RpcChangeState(CharacterState.Normal);
     }
 
-    void HandleMovement()
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    void RpcChangeState(CharacterState state)
     {
-        if (curState != CharacterState.Normal) return;
-
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
-        bool sprintInput = Input.GetKey(KeyCode.LeftShift);
-
-        float currentSpeed = sprintInput ? speed * 2 : speed;
-        movementVelocity = new Vector3(horizontalInput, 0, verticalInput).normalized * currentSpeed;
-        animator.SetFloat("Speed", movementVelocity.magnitude);
-
-        if (movementVelocity != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(movementVelocity);
-        }
-
-        if (characterController.isGrounded)
-        {
-            movementVelocity.y = -gravity * Runner.DeltaTime;
-        }
-        else
-        {
-            movementVelocity.y += gravity * Runner.DeltaTime;
-        }
-
-        characterController.Move(movementVelocity * Runner.DeltaTime);
+        CurrentState = state;
+        UpdateAnimation(state);
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RpcChangeState(CharacterState newState, RpcInfo info = default)
+    void UpdateAnimation(CharacterState state)
     {
-        if (curState == newState) return;
-        curState = newState;
-
         animator.ResetTrigger("Jump");
         animator.ResetTrigger("Attack");
         animator.ResetTrigger("Laugh");
-        animator.ResetTrigger("Hurt");
         animator.ResetTrigger("Die");
 
-        switch (newState)
+        switch (state)
         {
-            case CharacterState.Jump:
-                animator.SetTrigger("Jump");
-                movementVelocity.y = Mathf.Sqrt(2 * jumpHeight * gravity);
-                break;
-            case CharacterState.Attack:
-                animator.SetTrigger("Attack");
-                break;
-            case CharacterState.Hurt:
-                animator.SetTrigger("Hurt");
-                break;
-            case CharacterState.Laugh:
-                animator.SetTrigger("Laugh");
-                break;
-            case CharacterState.Die:
-                animator.SetTrigger("Die");
-                break;
+            case CharacterState.Jump: animator.SetTrigger("Jump"); break;
+            case CharacterState.Attack: animator.SetTrigger("Attack"); break;
+            case CharacterState.Laugh: animator.SetTrigger("Laugh"); break;
+            case CharacterState.Die: animator.SetTrigger("Die"); break;
         }
     }
 }
